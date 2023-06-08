@@ -35,3 +35,15 @@
 -   name: save the config
     nxos_config:
       save_when: modified
+
+
+- name: " nxos facts"
+  nxos_facts:
+    gather_subset:
+     - config
+
+- name: "debug - print facts"
+  debug:
+    msg "{{ansible_facts}}"
+
+  
