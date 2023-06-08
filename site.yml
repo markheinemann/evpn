@@ -1,0 +1,9 @@
+---
+# main playbook
+
+
+
+- hosts: leaf
+  gather_facts: no
+  roles:
+    - role: leaf

@@ -1,0 +1,134 @@
+
+hostname {{item.hostname}}
+
+nv overlay evpn
+
+{% for feature in item.features %}
+feature {{feature}}
+{% endfor %}
+
+no password strength-check
+no ip domain-lookup
+
+fabric forwarding anycast-gateway-mac {{item.anycast_gateway_mac}}
+ip pim rp-address {{item.pim_rp_address}} group-list {{item.pim_grp_list}}
+ip pim ssm range {{item.pim_ssm_range}}
+
+
+{% for vlan in item.vlan %}
+vlan {{vlan}}
+{% endfor %}
+
+
+
+#vlan <> vn segment
+{% for key, value in leaf[0].items() %}
+{% if key.startswith('Vlan') %}
+vlan {{ value }}
+  vn-segment {{ leaf[0]['vn segment' ~ key.replace('Vlan', '')] }}
+
+{% endif %}
+{% endfor %}
+
+vrf context {{item.vrf}}
+  vni {{item.l3vni}}
+  rd auto
+  address-family ipv4 unicast
+    route-target both auto
+    route-target both auto evpn
+vrf context management
+hardware access-list tcam region racl 512
+hardware access-list tcam region arp-ether 256 double-wide
+
+interface Vlan1
+
+
+#vlan <> anycast_gw
+{% for key, value in leaf[0].items() %}
+{% if key.startswith('gw_vlan') %}
+interface vlan {{ value }}
+  ip address {{ leaf[0]['vlan_anycast_gateway' ~ key.replace('gw_vlan', '')] }}
+  no shutdown
+  vrf member {{item.vrf}}
+  fabric forwarding mode anycast-gateway
+
+{% endif %}
+{% endfor %}
+
+interface Vlan{{item.l3vni_svi}}
+  no shutdown
+  vrf member {{item.vrf}}
+  ip forward
+
+interface nve1
+  no shutdown
+  host-reachability protocol bgp
+  source-interface loopback0
+{% for key, value in leaf[0].items() %}
+{% if key.startswith('Vlan') %}
+  member vni {{ leaf[0]['vn segment' ~ key.replace('Vlan', '')] }}
+    suppress-arp
+    mcast-group {{item.nve_multicast_grp}}
+{% endif %}
+{% endfor %}
+  member vni {{item.l3vni}} associate-vrf
+
+#uplinks to spines
+{% for key, value in leaf[0].items() %}
+{% if key.startswith('Ethernet') %}
+Interface {{ value }}
+ description {{ leaf[0]['description' ~ key.replace('Ethernet', '')] }}
+ no switchport
+ mtu 9216
+ medium p2p
+ ip unnumbered loopback0
+ ip router ospf {{item.ospf_process}} area 0.0.0.0
+ ip pim sparse-mode
+ no shutdown
+
+{% endif %}
+{% endfor %}
+
+interface loopback0
+  description Loopback0
+  ip address {{item.loopback0}}
+  ip router ospf {{item.ospf_process}} area 0.0.0.0
+  ip pim sparse-mode
+line console
+line vty
+router ospf {{item.ospf_process}}
+router bgp {{item.local_bgp_as}}
+  log-neighbor-changes
+  address-family ipv4 unicast
+  address-family l2vpn evpn
+  template peer VXLAN_SPINE
+    remote-as {{item.remote_bgp_as}}
+    update-source loopback0
+    address-family ipv4 unicast
+      send-community extended
+      soft-reconfiguration inbound
+    address-family l2vpn evpn
+      send-community
+      send-community extended
+{% for neighbor in item.bgp_neighbor %}
+  neighbor {{neighbor}}
+    inherit peer VXLAN_SPINE
+{% endfor %}
+  vrf TENANT1
+    log-neighbor-changes
+    address-family ipv4 unicast
+{% for net in item.advertised_network %}
+      network {{net}}
+{% endfor %}
+      advertise l2vpn evpn
+
+evpn
+  vni 100010 l2
+    rd auto
+    route-target import auto
+    route-target export auto
+
+
+
+
+

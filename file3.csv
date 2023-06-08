@@ -1,0 +1,17 @@
+function,hostname,loopback0,uplink_to_spine,feature,vrf,vlan,Vlan <> vn segment,L3vni,L3vni_svi,vlan <> anycast_gw,anycast_gateway_mac,ospf_process,nve_multicast_grp,pim_rp_address,pim_grp_list,pim_ssm_range,local_bgp_as,remote_bgp_as,bgp_neighbor,advertised_network,test_column
+spine,spine01,192.168.0.3/32,"Ethernet1/1,to_spine1_inte1/1
+Ethernet1/2,to spine2_inte2/1
+Ethernet1/3,to spine3_inte3/1","pim,bgp,ospf,nv overlay",TENANT1,"1,10,999","10,100010
+20,100020
+90,100090
+100,23345
+200,2323",100999,999,"10,10.10.1.254/24
+20,10.10.2.254/24",0000.0011.1234,100,224.1.1.192,1.2.3.4,224.0.0.0/4,232.0.0.0/8,64520,64520,"192.168.0.10,192.168.0.20","10.10.1.0/24,10.10.2.0/24",hello1
+spine,spine02,12.168.0.3/32,"Ethernet10/1,to_spine1_inte1/1
+Ethernet10/2,to spine2_inte2/1
+Ethernet10/3,to spine3_inte3/1","pim,bgp,ospf,nv overlay",TENANT1,"1,10,999,1234","10,100010
+20,100020
+90,100090
+100,23345
+200,2323",122999,999,"10,10.10.1.254/24
+20,10.10.2.254/24",0000.0011.1234,200,224.1.1.192,1.2.3.4,224.0.0.0/4,232.0.0.0/8,1234,4354,"192.168.0.1,192.168.0.2","90.10.1.0/24,90.10.2.0/24",hello2

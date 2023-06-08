@@ -1,0 +1,2 @@
+[leaf]
+leaf01 ansible_host=172.16.11.105 ansible_hostname=leaf01

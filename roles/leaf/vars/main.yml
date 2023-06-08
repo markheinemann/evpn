@@ -1,0 +1,100 @@
+leaf:
+- hostname: leaf01
+  features:
+    - pim
+    - bgp
+    - ospf
+    - nv overlay
+  loopback0: 192.168.0.3/32
+  Vlan1: 10
+  vn segment1: 100010
+  Vlan2: 20
+  vn segment2: 100020
+  Vlan3: 90
+  vn segment3: 100090
+  Vlan4: 100
+  vn segment4: 23345
+  Vlan5: 200
+  vn segment5: 2323
+  Ethernet1: Ethernet1/1
+  description1: to_spine1_inte1/1
+  Ethernet2: Ethernet1/2
+  description2: to spine2_inte2/1
+  Ethernet3: Ethernet1/3
+  description3: to spine3_inte3/1
+  vrf: TENANT1
+  vlan:
+    - 1
+    - 10
+    - 999
+  l3vni: 100999
+  l3vni_svi: 999
+  gw_vlan1: 10
+  vlan_anycast_gateway1: 10.10.1.254/24
+  gw_vlan2: 20
+  vlan_anycast_gateway2: 10.10.2.254/24
+  anycast_gateway_mac: 0000.0011.1234
+  ospf_process: 100
+  nve_multicast_grp: 224.1.1.192
+  pim_rp_address: 1.2.3.4
+  pim_grp_list: 224.0.0.0/4
+  pim_ssm_range: 232.0.0.0/8
+  local_bgp_as: 64520
+  remote_bgp_as: 64520
+  bgp_neighbor:
+    - 192.168.0.10
+    - 192.168.0.20
+  advertised_network:
+    - 10.10.1.0/24
+    - 10.10.2.0/24
+
+- hostname: leaf02
+  features:
+    - pim
+    - bgp
+    - ospf
+    - nv overlay
+  loopback0: 12.168.0.3/32
+  Vlan1: 10
+  vn segment1: 100010
+  Vlan2: 20
+  vn segment2: 100020
+  Vlan3: 90
+  vn segment3: 100090
+  Vlan4: 100
+  vn segment4: 23345
+  Vlan5: 200
+  vn segment5: 2323
+  Ethernet1: Ethernet10/1
+  description1: to_spine1_inte1/1
+  Ethernet2: Ethernet10/2
+  description2: to spine2_inte2/1
+  Ethernet3: Ethernet10/3
+  description3: to spine3_inte3/1
+  vrf: TENANT1
+  vlan:
+    - 1
+    - 10
+    - 999
+    - 1234
+  l3vni: 122999
+  l3vni_svi: 999
+  gw_vlan1: 10
+  vlan_anycast_gateway1: 10.10.1.254/24
+  gw_vlan2: 20
+  vlan_anycast_gateway2: 10.10.2.254/24
+  anycast_gateway_mac: 0000.0011.1234
+  ospf_process: 200
+  nve_multicast_grp: 224.1.1.192
+  pim_rp_address: 1.2.3.4
+  pim_grp_list: 224.0.0.0/4
+  pim_ssm_range: 232.0.0.0/8
+  local_bgp_as: 1234
+  remote_bgp_as: 4354
+  bgp_neighbor:
+    - 192.168.0.1
+    - 192.168.0.2
+  advertised_network:
+    - 90.10.1.0/24
+    - 90.10.2.0/24
+

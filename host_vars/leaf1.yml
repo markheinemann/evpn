@@ -1,0 +1,8 @@
+# vars file for leaf1
+
+router_id:200.200.200.200
+
+
+loopbacks:
+  - { interface: loopback200, addr: 10.10.10.21, mask: 32 }
+  - { interface: loopback201, addr: 2.2.2.1, mask: 32 }
