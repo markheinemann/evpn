@@ -1,0 +1,86 @@
+
+hostname {{item.hostname}}
+
+nv overlay evpn
+{% for feature in item.features %}
+feature {{feature}}
+{% endfor %}
+
+no password strength-check
+
+ip domain-lookup
+
+
+
+ip pim rp-address {{item.pim_rp_address}} group-list {{item.pim_grp_list}}
+ip pim ssm range {{item.pim_ssm_range}}
+
+
+{% for spinerp in item.spine_rp_address %}
+ip pim anycast-rp {{item.pim_rp_address}} {{spinerp}}
+{% endfor %}
+
+
+vlan 1
+
+vrf context management
+
+interface Vlan1
+
+
+#downlinks to leafs
+{% for key, value in spine[0].items() %}
+{% if key.startswith('Ethernet') %}
+Interface {{ value }}
+ description {{ spine[0]['description' ~ key.replace('Ethernet', '')] }}
+ no switchport
+ mtu 9216
+ medium p2p
+ ip unnumbered loopback0
+ ip router ospf {{item.ospf_process}} area 0.0.0.0
+ ip pim sparse-mode
+ no shutdown
+
+{% endif %}
+{% endfor %}
+
+
+
+interface loopback0
+  description Loopback0
+  ip address {{item.loopback0}}
+  ip router ospf {{item.ospf_process}} area 0.0.0.0
+  ip pim sparse-mode
+
+interface loopback1
+  description Loopback1
+  ip address {{item.loopback1}}
+  ip router ospf {{item.ospf_process}} area 0.0.0.0
+  ip pim sparse-mode
+
+line console
+line vty
+
+router ospf {{item.ospf_process}}
+router bgp {{item.local_bgp_as}}
+  log-neighbor-changes
+  address-family ipv4 unicast
+  address-family l2vpn evpn
+    retain route-target all
+  template peer VXLAN_LEAF
+    remote-as {{item.remote_bgp_as}}
+    update-source loopback0
+    address-family ipv4 unicast
+      send-community extended
+      route-reflector-client
+      soft-reconfiguration inbound
+    address-family l2vpn evpn
+      send-community
+      send-community extended
+      route-reflector-client
+{% for neighbor in item.bgp_neighbor %}
+  neighbor {{neighbor}}
+    inherit peer VXLAN_LEAF
+{% endfor %}
+
+ 

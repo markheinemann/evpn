@@ -1,0 +1,9 @@
+---
+
+-   name: send config to device
+    nxos_config:
+      src: CONFIGS/leaf01.txt
+
+-   name: save the config
+    nxos_config:
+      save_when: modified

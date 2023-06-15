@@ -7,3 +7,51 @@
   gather_facts: no
   roles:
     - role: leaf
+
+- hosts: spine
+  gather_facts: no
+  roles:
+    - role: spine
+
+
+
+#- name: List leaf and spine hosts
+#  hosts: localhost
+#  gather_facts: false
+#  tasks:
+#    - name: Print leaf hosts
+#      debug:
+#        msg: "Leaf hosts: {{ groups['leaf'] }}"
+
+#    - name: Print spine hosts
+#      debug:
+#        msg: "Spine hosts: {{ groups['spine'] }}"
+
+
+- hosts: all
+  gather_facts: false
+  vars_prompt:
+    - name: continue
+      prompt: "Continue? (y/n)"
+      private: no
+      default: n
+  tasks:
+    - name: Abort if 'n' is entered
+      assert:
+        that:
+          - continue == 'y'
+        fail_msg: "Aborted as 'n' was entered - NO CONFIGS SENT TO LEAFS OR SPINES"
+
+
+
+
+
+
+    - name: send config to device
+      nxos_config:
+        src: CONFIGS/{{ inventory_hostname }}.txt
+
+    - name: save the config
+      nxos_config:
+        save_when: modified
+

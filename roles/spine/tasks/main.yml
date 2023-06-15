@@ -1,2 +1,38 @@
----
 # tasks file for spine
+
+
+
+-   name: generate config file
+    template: src=spine.j2 dest=./CONFIGS/{{item.hostname}}.txt
+    with_items: "{{ spine }}"
+
+    
+
+
+
+#- name: Prompt for user input
+#  pause:
+#    prompt: "Do you want to continue and push config to spine device(s)? (y/n)"
+#  register: user_input
+
+#- name: Abort if user input is 'n'
+#  fail:
+#    msg: "Script aborted by user"
+#  when: user_input.user_input | lower == 'n'
+
+#- name: Continue with the execution
+#  debug:
+#    msg: "Continuing with the execution"
+#  when: user_input.user_input | lower == 'y'
+
+
+
+#-   name: send config to device
+#    nxos_config:
+#      src: CONFIGS/spine01.txt
+
+#-   name: save the config
+#    nxos_config:
+#      save_when: modified
+
+

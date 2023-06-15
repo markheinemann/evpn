@@ -1,2 +1,7 @@
 [leaf]
 leaf01 ansible_host=172.16.11.105 ansible_hostname=leaf01
+leaf02 ansible_host=172.16.11.104 ansible_hostname=leaf02
+
+[spine]
+spine01 ansible_host=172.16.11.101 ansible_hostname=spine01
+
