@@ -1,0 +1,39 @@
+---
+- name: Check Nexus 9K switch details
+  hosts: all
+  gather_facts: no
+  connection: network_cli
+
+  tasks:
+    - name: Check interface status with description
+      nxos_command:
+        commands:
+          - show interface status | excl notconnec
+      register: interface_status_output
+      ignore_errors: true
+
+    - name: Display interfaces with descriptions
+      debug:
+        var: interface_status_output.stdout_lines
+
+    - name: Check OSPF neighbors
+      nxos_command:
+        commands:
+          - show ip ospf neighbor
+      register: ospf_neighbors_output
+      ignore_errors: true
+
+    - name: Display OSPF neighbors
+      debug:
+        var: ospf_neighbors_output.stdout_lines
+
+    - name: Check BGP neighbors
+      nxos_command:
+        commands:
+          - show ip bgp summary
+      register: bgp_neighbors_output
+      ignore_errors: true
+
+    - name: Display BGP neighbors
+      debug:
+        var: bgp_neighbors_output.stdout_lines

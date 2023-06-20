@@ -7,6 +7,10 @@ feature pim
 feature bgp
 feature ospf
 feature nv overlay
+feature fabric forwarding
+feature interface-vlan
+feature vn-segment-vlan-based
+feature telemetry
 
 no password strength-check
 no ip domain-lookup
@@ -21,22 +25,11 @@ vlan 10
 vlan 999
 
 
-
 #vlan <> vn segment
 vlan 10
   vn-segment 100010
-
-vlan 20
-  vn-segment 100020
-
-vlan 90
-  vn-segment 100090
-
-vlan 100
-  vn-segment 23345
-
-vlan 200
-  vn-segment 2323
+vlan 999
+  vn-segment 100999
 
 
 vrf context TENANT1
@@ -53,12 +46,6 @@ interface Vlan1
 
 
 #vlan <> anycast_gw
-interface vlan 20
-  ip address 10.10.2.254/24
-  no shutdown
-  vrf member TENANT1
-  fabric forwarding mode anycast-gateway
-
 interface vlan 10
   ip address 10.10.1.254/24
   no shutdown
@@ -71,6 +58,7 @@ interface Vlan999
   vrf member TENANT1
   ip forward
 
+
 interface nve1
   no shutdown
   host-reachability protocol bgp
@@ -78,41 +66,13 @@ interface nve1
   member vni 100010
     suppress-arp
     mcast-group 224.1.1.192
-  member vni 100020
-    suppress-arp
-    mcast-group 224.1.1.192
-  member vni 100090
-    suppress-arp
-    mcast-group 224.1.1.192
-  member vni 23345
-    suppress-arp
-    mcast-group 224.1.1.192
-  member vni 2323
+  member vni 100999
     suppress-arp
     mcast-group 224.1.1.192
   member vni 100999 associate-vrf
 
+
 #uplinks to spines
-Interface Ethernet1/2
- description to spine2_inte2/1
- no switchport
- mtu 9216
- medium p2p
- ip unnumbered loopback0
- ip router ospf 100 area 0.0.0.0
- ip pim sparse-mode
- no shutdown
-
-Interface Ethernet1/3
- description to spine3_inte3/1
- no switchport
- mtu 9216
- medium p2p
- ip unnumbered loopback0
- ip router ospf 100 area 0.0.0.0
- ip pim sparse-mode
- no shutdown
-
 Interface Ethernet1/1
  description to_spine1_inte1/1
  no switchport
@@ -123,6 +83,18 @@ Interface Ethernet1/1
  ip pim sparse-mode
  no shutdown
 
+Interface Ethernet1/2
+ description to spine2_inte1/2
+ no switchport
+ mtu 9216
+ medium p2p
+ ip unnumbered loopback0
+ ip router ospf 100 area 0.0.0.0
+ ip pim sparse-mode
+ no shutdown
+
+
+
 
 interface loopback0
   description Loopback0
@@ -132,6 +104,9 @@ interface loopback0
 line console
 line vty
 router ospf 100
+
+
+
 router bgp 64520
   log-neighbor-changes
   address-family ipv4 unicast
@@ -145,15 +120,14 @@ router bgp 64520
     address-family l2vpn evpn
       send-community
       send-community extended
-  neighbor 192.168.0.10
+  neighbor 192.168.0.1
     inherit peer VXLAN_SPINE
-  neighbor 192.168.0.20
+  neighbor 192.168.0.2
     inherit peer VXLAN_SPINE
   vrf TENANT1
     log-neighbor-changes
     address-family ipv4 unicast
       network 10.10.1.0/24
-      network 10.10.2.0/24
       advertise l2vpn evpn
 
 evpn

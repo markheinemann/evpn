@@ -7,6 +7,10 @@ feature pim
 feature bgp
 feature ospf
 feature nv overlay
+feature fabric forwarding
+feature interface-vlan
+feature vn-segment-vlan-based
+feature telemetry
 
 no password strength-check
 no ip domain-lookup
@@ -17,31 +21,19 @@ ip pim ssm range 232.0.0.0/8
 
 
 vlan 1
-vlan 10
+vlan 20
 vlan 999
-vlan 1234
-
 
 
 #vlan <> vn segment
-vlan 10
-  vn-segment 100010
-
 vlan 20
   vn-segment 100020
-
-vlan 90
-  vn-segment 100090
-
-vlan 100
-  vn-segment 23345
-
-vlan 200
-  vn-segment 2323
+vlan 999
+  vn-segment 100999
 
 
 vrf context TENANT1
-  vni 122999
+  vni 100999
   rd auto
   address-family ipv4 unicast
     route-target both auto
@@ -55,13 +47,7 @@ interface Vlan1
 
 #vlan <> anycast_gw
 interface vlan 20
-  ip address 10.10.2.254/24
-  no shutdown
-  vrf member TENANT1
-  fabric forwarding mode anycast-gateway
-
-interface vlan 10
-  ip address 10.10.1.254/24
+  ip address 10.20.1.254/24
   no shutdown
   vrf member TENANT1
   fabric forwarding mode anycast-gateway
@@ -72,73 +58,61 @@ interface Vlan999
   vrf member TENANT1
   ip forward
 
+
 interface nve1
   no shutdown
   host-reachability protocol bgp
   source-interface loopback0
-  member vni 100010
-    suppress-arp
-    mcast-group 224.1.1.192
   member vni 100020
     suppress-arp
     mcast-group 224.1.1.192
-  member vni 100090
+  member vni 100999
     suppress-arp
     mcast-group 224.1.1.192
-  member vni 23345
-    suppress-arp
-    mcast-group 224.1.1.192
-  member vni 2323
-    suppress-arp
-    mcast-group 224.1.1.192
-  member vni 122999 associate-vrf
+  member vni 100999 associate-vrf
+
 
 #uplinks to spines
 Interface Ethernet1/2
- description to spine2_inte2/1
+ description to_spine1_inte1/2
  no switchport
  mtu 9216
  medium p2p
  ip unnumbered loopback0
- ip router ospf 200 area 0.0.0.0
- ip pim sparse-mode
- no shutdown
-
-Interface Ethernet1/3
- description to spine3_inte3/1
- no switchport
- mtu 9216
- medium p2p
- ip unnumbered loopback0
- ip router ospf 200 area 0.0.0.0
+ ip router ospf 100 area 0.0.0.0
  ip pim sparse-mode
  no shutdown
 
 Interface Ethernet1/1
- description to_spine1_inte1/1
+ description to spine2_inte1/1
  no switchport
  mtu 9216
  medium p2p
  ip unnumbered loopback0
- ip router ospf 200 area 0.0.0.0
+ ip router ospf 100 area 0.0.0.0
  ip pim sparse-mode
  no shutdown
 
 
+
+
 interface loopback0
   description Loopback0
-  ip address 12.168.0.3/32
-  ip router ospf 200 area 0.0.0.0
+  ip address 192.168.0.4/32
+  ip router ospf 100 area 0.0.0.0
   ip pim sparse-mode
 line console
 line vty
-router ospf 200
-router bgp 1234
+router ospf 100
+
+
+
+router bgp 64520
   log-neighbor-changes
   address-family ipv4 unicast
   address-family l2vpn evpn
   template peer VXLAN_SPINE
-    remote-as 4354
+    remote-as 64520
     update-source loopback0
     address-family ipv4 unicast
       send-community extended
@@ -153,8 +127,7 @@ router bgp 1234
   vrf TENANT1
     log-neighbor-changes
     address-family ipv4 unicast
-      network 90.10.1.0/24
-      network 90.10.2.0/24
+      network 10.20.1.0/24
       advertise l2vpn evpn
 
 evpn

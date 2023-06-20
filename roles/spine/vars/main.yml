@@ -5,14 +5,18 @@ spine:
     - bgp
     - ospf
     - nv overlay
+    - fabric forwarding
+    - interface-vlan
+    - vn-segment-vlan-based
+    - telemetry
   loopback0: 192.168.0.1/32
   loopback1: 1.2.3.4/32
   Ethernet1: Ethernet1/1
   description1: to_leaf01_inte1/1
   Ethernet2: Ethernet1/2
-  description2: to leaf02_inte1/1
+  description2: to leaf02_inte1/2
   Ethernet3: Ethernet1/3
-  description3: to leaf03_inte3/1
+  description3: to leaf03_inte1/3
   ospf_process: 100
   pim_rp_address: 1.2.3.4
   pim_grp_list: 224.0.0.0/4

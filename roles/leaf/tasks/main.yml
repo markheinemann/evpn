@@ -3,38 +3,25 @@
 
 
 
--   name: generate config file
-    template: src=leaf.j2 dest=./CONFIGS/{{item.hostname}}.txt
-    with_items: "{{ leaf }}"
+#-   name: generate config file
+#    template: src=leaf.j2 dest=./CONFIGS/{{item.hostname}}.txt
+#    with_items: "{{ leaf }}"
 
     
 
 
 
-#- name: Prompt for user input
-#  pause:
-#    prompt: "Do you want to continue and push config to device(s)? (y/n)"
-#  register: user_input
+-  name: Load leaf configuration from main.yml
+   include_vars:
+     file: ./vars/main.yml
+     name: main_config
 
-#- name: Abort if user input is 'n'
-#  fail:
-#    msg: "Script aborted by user"
-#  when: user_input.user_input | lower == 'n'
+-  name: Generate config file
+   template:
+     src: leaf.j2
+     dest: "./CONFIGS/{{ item.hostname }}.txt"
+   loop: "{{ main_config.leaf }}"
 
-#- name: Continue with the execution
-#  debug:
-#    msg: "Continuing with the execution"
-#  when: user_input.user_input | lower == 'y'
-
-
-
-#-   name: send config to device
-#    nxos_config:
-#      src: CONFIGS/leaf01.txt
-
-#-   name: save the config
-#    nxos_config:
-#      save_when: modified
 
 
 

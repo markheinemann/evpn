@@ -124,28 +124,28 @@ with open(output_yaml_file_path_leaf, 'w') as yaml_file:
 
             
             yaml_file.write("\n")
-print(f"YAML file generated at: {output_yaml_file_path_leaf}")
+        print(f"YAML file generated at: {output_yaml_file_path_leaf}")
 
 
-# move the extraced vars to roles/leaf/vars
+        # move the extraced vars to roles/leaf/vars
 
-# Define the source file path for LEAF
-source_file = 'leaf_evpn_vars.yml'
+        # Define the source file path for LEAF
+        source_file = 'leaf_evpn_vars.yml'
 
-# Define the destination folder path
-destination_folder = 'roles/leaf/vars'
+        # Define the destination folder path
+        destination_folder = 'roles/leaf/vars'
 
-# Define the new file name
-new_file_name = 'main.yml'
+        # Define the new file name
+        new_file_name = 'main.yml'
 
-# Create the full path for the destination file
-destination_file = os.path.join(destination_folder, new_file_name)
+        # Create the full path for the destination file
+        destination_file = os.path.join(destination_folder, new_file_name)
 
-# Move the file to the destination folder
-shutil.move(source_file, destination_file)
+        # Move the file to the destination folder
+        shutil.move(source_file, destination_file)
 
-# Output a success message
-print(f"The file '{source_file}' has been moved to '{destination_file}' and renamed to '{new_file_name}'.")
+        # Output a success message
+        print(f"The file '{source_file}' has been moved to '{destination_file}' and renamed to '{new_file_name}'.")
 
 
 
@@ -284,25 +284,25 @@ with open(output_yaml_file_path_spine, 'w') as yaml_file:
 
             
             yaml_file.write("\n")
-print(f"YAML file generated at: {output_yaml_file_path_spine}")
+        print(f"YAML file generated at: {output_yaml_file_path_spine}")
 
 
-# move the extraced vars to roles/spine/vars
+        # move the extraced vars to roles/spine/vars
 
-# Define the source file path for LEAF
-source_file = 'spine_evpn_vars.yml'
+        # Define the source file path for LEAF
+        source_file = 'spine_evpn_vars.yml'
 
-# Define the destination folder path
-destination_folder = 'roles/spine/vars'
+        # Define the destination folder path
+        destination_folder = 'roles/spine/vars'
 
-# Define the new file name
-new_file_name = 'main.yml'
+        # Define the new file name
+        new_file_name = 'main.yml'
 
-# Create the full path for the destination file
-destination_file = os.path.join(destination_folder, new_file_name)
+        # Create the full path for the destination file
+        destination_file = os.path.join(destination_folder, new_file_name)
 
-# Move the file to the destination folder
-shutil.move(source_file, destination_file)
+        # Move the file to the destination folder
+        shutil.move(source_file, destination_file)
 
 # Output a success message
 print(f"The file '{source_file}' has been moved to '{destination_file}' and renamed to '{new_file_name}'.")

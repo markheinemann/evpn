@@ -20,15 +20,14 @@ vlan {{vlan}}
 {% endfor %}
 
 
-
 #vlan <> vn segment
-{% for key, value in leaf[0].items() %}
+{% for key, value in item.items() %}
 {% if key.startswith('Vlan') %}
 vlan {{ value }}
-  vn-segment {{ leaf[0]['vn segment' ~ key.replace('Vlan', '')] }}
-
+  vn-segment {{ item['vn segment' ~ key.replace('Vlan', '')] }}
 {% endif %}
 {% endfor %}
+
 
 vrf context {{item.vrf}}
   vni {{item.l3vni}}
@@ -44,40 +43,42 @@ interface Vlan1
 
 
 #vlan <> anycast_gw
-{% for key, value in leaf[0].items() %}
+{% for key, value in item.items() %}
 {% if key.startswith('gw_vlan') %}
 interface vlan {{ value }}
-  ip address {{ leaf[0]['vlan_anycast_gateway' ~ key.replace('gw_vlan', '')] }}
+  ip address {{ item['vlan_anycast_gateway' ~ key.replace('gw_vlan', '')] }}
   no shutdown
   vrf member {{item.vrf}}
   fabric forwarding mode anycast-gateway
-
 {% endif %}
 {% endfor %}
+
 
 interface Vlan{{item.l3vni_svi}}
   no shutdown
   vrf member {{item.vrf}}
   ip forward
 
+
 interface nve1
   no shutdown
   host-reachability protocol bgp
   source-interface loopback0
-{% for key, value in leaf[0].items() %}
+{% for key, value in item.items() %}
 {% if key.startswith('Vlan') %}
-  member vni {{ leaf[0]['vn segment' ~ key.replace('Vlan', '')] }}
+  member vni {{ item['vn segment' ~ key.replace('Vlan', '')] }}
     suppress-arp
     mcast-group {{item.nve_multicast_grp}}
 {% endif %}
 {% endfor %}
   member vni {{item.l3vni}} associate-vrf
 
+
 #uplinks to spines
-{% for key, value in leaf[0].items() %}
+{% for key, value in item.items() %}
 {% if key.startswith('Ethernet') %}
 Interface {{ value }}
- description {{ leaf[0]['description' ~ key.replace('Ethernet', '')] }}
+ description {{ item['description' ~ key.replace('Ethernet', '')] }}
  no switchport
  mtu 9216
  medium p2p
@@ -89,6 +90,8 @@ Interface {{ value }}
 {% endif %}
 {% endfor %}
 
+
+
 interface loopback0
   description Loopback0
   ip address {{item.loopback0}}
@@ -97,6 +100,9 @@ interface loopback0
 line console
 line vty
 router ospf {{item.ospf_process}}
+
+
+
 router bgp {{item.local_bgp_as}}
   log-neighbor-changes
   address-family ipv4 unicast

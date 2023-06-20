@@ -51,12 +51,14 @@ interface loopback0
   ip address {{item.loopback0}}
   ip router ospf {{item.ospf_process}} area 0.0.0.0
   ip pim sparse-mode
+  no shut
 
 interface loopback1
   description Loopback1
   ip address {{item.loopback1}}
   ip router ospf {{item.ospf_process}} area 0.0.0.0
   ip pim sparse-mode
+  no shut
 
 line console
 line vty

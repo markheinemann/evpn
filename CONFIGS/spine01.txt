@@ -6,6 +6,10 @@ feature pim
 feature bgp
 feature ospf
 feature nv overlay
+feature fabric forwarding
+feature interface-vlan
+feature vn-segment-vlan-based
+feature telemetry
 
 no password strength-check
 
@@ -29,8 +33,18 @@ interface Vlan1
 
 
 #downlinks to leafs
+Interface Ethernet1/1
+ description to_leaf01_inte1/1
+ no switchport
+ mtu 9216
+ medium p2p
+ ip unnumbered loopback0
+ ip router ospf 100 area 0.0.0.0
+ ip pim sparse-mode
+ no shutdown
+
 Interface Ethernet1/2
- description to leaf02_inte1/1
+ description to leaf02_inte1/2
  no switchport
  mtu 9216
  medium p2p
@@ -40,17 +54,7 @@ Interface Ethernet1/2
  no shutdown
 
 Interface Ethernet1/3
- description to leaf03_inte3/1
- no switchport
- mtu 9216
- medium p2p
- ip unnumbered loopback0
- ip router ospf 100 area 0.0.0.0
- ip pim sparse-mode
- no shutdown
-
-Interface Ethernet1/1
- description to_leaf01_inte1/1
+ description to leaf03_inte1/3
  no switchport
  mtu 9216
  medium p2p
